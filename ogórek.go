@@ -344,7 +344,11 @@ func (d *Decoder) loadLong() error {
 	}
 	v := new(big.Int)
 	v.SetString(string(line[:len(line)-1]), 10)
-	d.push(v)
+	if v.BitLen() < 63 {
+		d.push(v.Int64())
+	} else {
+		d.push(v)
+	}
 	return nil
 }
 
@@ -367,7 +371,11 @@ func (d *Decoder) loadLong1() error {
 		rawNum = append(rawNum, b2)
 	}
 	decodedNum, err := decodeLong(string(rawNum))
-	d.push(decodedNum)
+	if decodedNum.BitLen() < 63 {
+		d.push(decodedNum.Int64())
+	} else {
+		d.push(decodedNum)
+	}
 	return nil
 }
 
